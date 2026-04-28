@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>爱心祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #1a1a1a;
+            overflow: hidden;
+            font-family: "微软雅黑", sans-serif;
+        }
+
+        /* 完全还原系统窗口样式 */
+        .window {
+            position: absolute;
+            width: 110px;
+            height: 50px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 窗口标题栏 */
+        .title-bar {
+            height: 20px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4px;
+            font-size: 10px;
+            color: #666;
+        }
+
+        /* 窗口控制按钮 */
+        .controls {
+            display: flex;
+            gap: 6px;
+        }
+        .btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+        }
+        .min-btn { background: #fff; border: 1px solid #ccc; }
+        .max-btn { background: #fff; border: 1px solid #ccc; }
+        .close-btn { background: #fff; border: 1px solid #ccc; color: #000; }
+
+        /* 窗口内容区 */
+        .content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #444;
+            padding: 0 4px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const TEXT_LIST = [
+            "每天都要开心",
+            "愿所有美好如期而至",
+            "要一直开心呀",
+            "保持微笑，保持热爱",
+            "愿你被世界温柔以待",
+            "今天也要元气满满",
+            "记得好好爱自己",
+            "愿你眼里的星星永远闪亮",
+            "生活明朗，万物可爱",
+            "所有的美好都在向你奔赴而来",
+            "你超棒的！",
+            "愿你平安喜乐",
+            "今天的你也很可爱",
+            "万事顺意，得偿所愿"
+        ];
+
+        const MACARON_COLORS = [
+            "#FFE6E6", "#FFF0E6", "#FFF6E6", "#FFFFE6",
+            "#F6FFE6", "#E6FFE6", "#E6FFF6", "#E6FFFF",
+            "#E6F6FF", "#E6EEFF", "#EEE6FF", "#F6E6FF",
+            "#FFE6FF", "#FFE6F6"
+        ];
+
+        let windows = [];
+
+        function randomChoice(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // 创建和截图完全一样的窗口
+        function createWindow(x, y) {
+            const win = document.createElement('div');
+            win.className = 'window';
+            win.style.left = x + 'px';
+            win.style.top = y + 'px';
+
+            // 标题栏
+            const titleBar = document.createElement('div');
+            titleBar.className = 'title-bar';
+            titleBar.innerText = '小惊喜';
+
+            // 控制按钮
+            const controls = document.createElement('div');
+            controls.className = 'controls';
+            controls.innerHTML = `
+                <div class="btn min-btn"></div>
+                <div class="btn max-btn"></div>
+                <div class="btn close-btn">×</div>
+            `;
+            titleBar.appendChild(controls);
+
+            // 内容区（带马卡龙底色）
+            const content = document.createElement('div');
+            content.className = 'content';
+            content.innerText = randomChoice(TEXT_LIST);
+            content.style.backgroundColor = randomChoice(MACARON_COLORS);
+
+            win.appendChild(titleBar);
+            win.appendChild(content);
+            document.body.appendChild(win);
+            windows.push(win);
+        }
+
+        // 清空所有窗口
+        function clearAllWindows() {
+            windows.forEach(win => win.remove());
+            windows = [];
+        }
+
+        async function start() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            // 爱心轨迹动画
+            for (let i = 0; i < 180; i++) {
+                const t = i * 2 * Math.PI / 180;
+                const x = 16 * Math.sin(t) ** 3;
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                createWindow(centerX + x * 18, centerY + y * 18);
+                await new Promise(r => setTimeout(r, 15));
+            }
+
+            // 停留2秒后消失
+            await new Promise(r => setTimeout(r, 2000));
+            clearAllWindows();
+
+            // 随机弹窗
+            await new Promise(r => setTimeout(r, 500));
+            for (let i = 0; i < 200; i++) {
+                const x = Math.random() * (window.innerWidth - 110);
+                const y = Math.random() * (window.innerHeight - 50);
+                createWindow(x, y);
+                await new Promise(r => setTimeout(r, 50));
+            }
+        }
+
+        window.onload = start;
+    </script>
+</body>
+</html>
